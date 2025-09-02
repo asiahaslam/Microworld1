@@ -1,0 +1,18 @@
+{
+  "num_foxes": 2,
+  "num_hounds": 3,
+  "fox_speed": 2,
+  "hound_speed": 3,
+  "fox_sight": [ 999, 999, 999, 0 ],
+  "hound_sight": [4, 1, 1, 0],
+  "wall":"w",
+  "open": "o",
+  "exit": "?",
+  "tele_symbols": [ "[", "]", "(", ")" ],
+  "tele_dests" : [1, 0, 3, 2],
+  "goal":"!",
+  "fox_start": "@",
+  "hound_start": "$",
+  "wall_color": [ 51, 12, 16 ],
+  "open_color": [ 120, 255, 124 ]
+}
