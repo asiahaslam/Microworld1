@@ -2,15 +2,17 @@
 
 #include"ai.hpp"
 
+using namespace std;
+
 class HoundAI : public AI {
 private:
 public:
     HoundAI(
         unsigned id,
         unsigned agent_speed,
-        std::mt19937_64* rng
+        mt19937_64* rng
     );
-    virtual std::vector<std::string> Run(
+    virtual vector<string> Run(
         Percepts& percepts,
         AgentComm * comms
     );

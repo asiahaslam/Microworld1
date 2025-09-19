@@ -2,20 +2,22 @@
 
 #include"ai.hpp"
 
+using namespace std;
+
 class FoxAI : public AI {
 private:
-    std::string goal;
-    std::string exit;
-    std::vector<std::string> teleporters;
+    string goal;
+    string exit;
+    vector<string> teleporters;
 public:
     FoxAI(
         unsigned id,
         unsigned agent_speed,
-        std::mt19937_64* rng,
-        std::string goal,
-        std::string exit,
-        std::vector<std::string> teleporters);
-    virtual std::vector<std::string> Run(
+        mt19937_64* rng,
+        string goal,
+        string exit,
+        vector<string> teleporters);
+    virtual vector<string> Run(
         Percepts& percepts,
         AgentComm * comms
     );

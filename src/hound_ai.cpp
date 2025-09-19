@@ -1,5 +1,7 @@
 #include"hound_ai.hpp"
 
+using namespace std;
+
 /***************************************************************
 HOUND AI CLASS DEFINITION
 */
@@ -7,13 +9,13 @@ HOUND AI CLASS DEFINITION
 HoundAI::HoundAI(
     unsigned id,
     unsigned agent_speed,
-    std::mt19937_64* rng
+    mt19937_64* rng
 )
     : AI(id, agent_speed, rng)
 {
 }
 
-std::vector<std::string> HoundAI::Run(
+vector<string> HoundAI::Run(
     Percepts& percepts,
     AgentComm * comms
 ) {
@@ -21,43 +23,43 @@ std::vector<std::string> HoundAI::Run(
     // DO NOT LEAVE THIS CODE (COMMENTED OUT OR IN) IN
     // YOUR SUBMISSION
 
-    /*std::cout << "\n=========================\n";
-    std::cout << "HOUND ID: " << id << std::endl;
-    std::cout << "CURRENT: ";
+    /*cout << "\n=========================\n";
+    cout << "HOUND ID: " << id << endl;
+    cout << "CURRENT: ";
     for (size_t i = 0; i < percepts.current.size(); i++) {
-        std::cout << percepts.current[i] << " ";
+        cout << percepts.current[i] << " ";
     }
-    std::cout << "\nFORWARD: ";
+    cout << "\nFORWARD: ";
     for (size_t i = 0; i < percepts.forward.size(); i++) {
-        std::cout << percepts.forward[i] << " ";
+        cout << percepts.forward[i] << " ";
     }
-    std::cout << "\nBACKWARD: ";
+    cout << "\nBACKWARD: ";
     for (size_t i = 0; i < percepts.backward.size(); i++) {
-        std::cout << percepts.backward[i] << " ";
+        cout << percepts.backward[i] << " ";
     }
-    std::cout << "\nLEFT: ";
+    cout << "\nLEFT: ";
     for (size_t i = 0; i < percepts.left.size(); i++) {
-        std::cout << percepts.left[i] << " ";
+        cout << percepts.left[i] << " ";
     }
-    std::cout << "\nRIGHT: ";
+    cout << "\nRIGHT: ";
     for (size_t i = 0; i < percepts.right.size(); i++) {
-        std::cout << percepts.right[i] << " ";
+        cout << percepts.right[i] << " ";
     }
-    std::cout << "\nSIGHTINGS:\n";
+    cout << "\nSIGHTINGS:\n";
     for (size_t i = 0; i < percepts.sightings.size(); i++) {
-        if (percepts.sightings[i].type == AgentType::FOX) std::cout << "   FOX ";
-        else std::cout << "  HOUND ";
-        std::cout << "Dir " << percepts.sightings[i].direction << " ";
-        std::cout << "Dis " << percepts.sightings[i].distance << "\n";
+        if (percepts.sightings[i].type == AgentType::FOX) cout << "   FOX ";
+        else cout << "  HOUND ";
+        cout << "Dir " << percepts.sightings[i].direction << " ";
+        cout << "Dis " << percepts.sightings[i].distance << "\n";
     }
-    std::cout << "SCENT: " << percepts.scent << std::endl;*/
-    std::cout << "COMMS:\n";
-    if (comms == nullptr) std::cout << "No communication.\n";
+    cout << "SCENT: " << percepts.scent << endl;*/
+    cout << "COMMS:\n";
+    if (comms == nullptr) cout << "No communication.\n";
     else {
         for (size_t i = 0; i < comms->bark.size(); i++) {
-            std::cout << "HOUND " << i << " Bark: " << comms->bark[i]
+            cout << "HOUND " << i << " Bark: " << comms->bark[i]
                 << " Dir: " << comms->direction[i].to_string()
-                << std::endl;
+                << endl;
         }
     }
 
@@ -83,12 +85,12 @@ std::vector<std::string> HoundAI::Run(
         comms->bark[0] = 9;
     }
 
-    std::vector<std::string> cmds;
+    vector<string> cmds;
 
-    std::vector<std::string> arr = { "F", "L", "R" };
+    vector<string> arr = { "F", "L", "R" };
 
     for (unsigned i = 0; i < agent_speed; i++) {
-        std::shuffle(arr.begin(), arr.end(), *rng);
+        shuffle(arr.begin(), arr.end(), *rng);
         cmds.push_back(arr[0]);
     }
     return cmds;
