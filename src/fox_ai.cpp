@@ -85,7 +85,7 @@ vector<string> FoxAI::Run(
 
     vector<string> cmds;
 
-    if (percepts.current[0] == goal) cmds.push_back("U");
+    /* if (percepts.current[0] == goal) cmds.push_back("U");
     else if (percepts.current[0] == exit) cmds.push_back("U");
     else if (find(teleporters.begin(), teleporters.end(), percepts.current[0]) != teleporters.end()) {
         cmds.push_back("U");
@@ -94,6 +94,52 @@ vector<string> FoxAI::Run(
     while(cmds.size() < 2) {        
 	shuffle(arr.begin(), arr.end(), *rng);
         cmds.push_back(arr[0]);
+    } */
+
+    if (percepts.current[0] == goal) cmds.push_back("U");
+
+    bool foundGoal = false;
+
+    // if no goal found forward go left. then right. then if not do random.
+
+    for (size_t i = 0; i < percepts.forward.size(); i++) {
+        if (percepts.forward[i] == goal) {
+            cmds.push_back("F");
+            if (i == 0) {
+                cmds.push_back("U");
+            }
+            else {
+                cmds.push_back("F");
+            }
+            foundGoal = true;
+        }
+    }
+
+    if (foundGoal == false) {
+        for (size_t i = 0; i < percepts.left.size(); i++) {
+        if (percepts.left[i] == goal) {
+            cmds.push_back("L");
+            cmds.push_back("F");
+            foundGoal = true;
+        }
+    }
+    }
+
+    if (foundGoal == false) {
+        for (size_t i = 0; i < percepts.right.size(); i++) {
+        if (percepts.right[i] == goal) {
+            cmds.push_back("R");
+            cmds.push_back("F");
+        }
+    }
+    }
+
+    if (foundGoal == false) {
+        vector<string> arr = { "F", "B", "L", "R" };
+        while(cmds.size() < 2) {        
+            shuffle(arr.begin(), arr.end(), *rng);
+            cmds.push_back(arr[0]);
+        }
     }
     
     return cmds;
