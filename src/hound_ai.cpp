@@ -87,11 +87,57 @@ vector<string> HoundAI::Run(
 
     vector<string> cmds;
 
-    vector<string> arr = { "F", "L", "R" };
+    bool foundFox = false;
+
+    for (size_t i = 0; i < percepts.sightings.size(); i++) {
+        if (percepts.sightings[i].type == AgentType::FOX) cout << "   FOX ";
+        else cout << "  HOUND ";
+        cout << "Dir " << percepts.sightings[i].direction << " ";
+        cout << "Dis " << percepts.sightings[i].distance << "\n";
+    }
+
+    for (size_t i = 0; i < percepts.sightings.size(); i++) {
+        if (percepts.sightings[i].type == AgentType::FOX) {
+            if (percepts.sightings[i].direction == "F") {
+                cmds.push_back("F");
+                if (percepts.sightings[i].distance > 1) {
+                    cmds.push_back("F");
+                }
+                if (percepts.sightings[i].distance > 2) {
+                    cmds.push_back("F");
+                }
+            }
+            else if (percepts.sightings[i].direction == "L") {
+                cmds.push_back("L");
+                cmds.push_back("F");
+                if (percepts.sightings[i].distance > 1) {
+                    cmds.push_back("F");
+                }
+            }
+            else {
+                cmds.push_back("R");
+                cmds.push_back("F");
+                if (percepts.sightings[i].distance > 1) {
+                    cmds.push_back("F");
+                }
+            }
+            foundFox = true;
+        }
+    }
+
+    if (foundFox == false) {
+        vector<string> arr = { "F", "L", "R" };
+        for (unsigned i = 0; i < 2; i++) {
+            shuffle(arr.begin(), arr.end(), *rng);
+            cmds.push_back(arr[0]);
+        }
+    }
+
+    /* vector<string> arr = { "F", "L", "R" };
 
     for (unsigned i = 0; i < agent_speed; i++) {
         shuffle(arr.begin(), arr.end(), *rng);
         cmds.push_back(arr[0]);
-    }
+    } */
     return cmds;
 }
