@@ -25,7 +25,7 @@ vector<string> FoxAI::Run(
     // DO NOT LEAVE THIS CODE (COMMENTED OUT OR IN) IN
     // YOUR SUBMISSION
 
-    /*cout << "\n=========================\n";
+    cout << "\n=========================\n";
     cout << "FOX ID: " << id << endl;
     cout << "CURRENT: ";
     for (size_t i = 0; i < percepts.current.size(); i++) {
@@ -55,7 +55,7 @@ vector<string> FoxAI::Run(
         cout << "Dis " << percepts.sightings[i].distance << "\n";
     }
     cout << "SCENT: " << percepts.scent << endl;
-    cout << "COMMS:\n";
+    /*cout << "COMMS:\n";
     if (comms == nullptr) cout << "No communication.\n";
     else {
         for (size_t i = 0; i < comms->size(); i++) {
