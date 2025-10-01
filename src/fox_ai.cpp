@@ -17,6 +17,52 @@ FoxAI::FoxAI(
 {
 }
 
+string FoxAI::nearbyHound(
+    Percepts& percepts
+) {
+    // return whether there is a hound close by
+    // if no return N. if yes return distance and direction
+    return "N";
+}
+
+string FoxAI::flee(
+    Percepts& percepts,
+    string houndLocation
+) {
+    // decide where to flee to. avoid walls. maybe do exit or teleport
+    // go away from hound's location
+    return "N";
+}
+
+string FoxAI::findGoal(
+    Percepts& percepts
+) {
+    // return string of commands. if no goal found return "N"
+    return "N";
+}
+
+string FoxAI::Choice(
+    Percepts& percepts
+) {
+    string commands = "";
+
+    string houndLocation = nearbyHound(percepts);
+
+    if (houndLocation == "N") {
+        string goToGoal = findGoal(percepts);
+
+        if (goToGoal[0] == 'N') {
+            // run function to explore area
+        }
+        else {
+            return goToGoal;
+        }
+    }
+    else {
+        return flee(percepts, houndLocation);
+    }
+}
+
 vector<string> FoxAI::Run(
     Percepts& percepts,
     AgentComm * comms

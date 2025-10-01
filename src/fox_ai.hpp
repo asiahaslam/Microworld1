@@ -16,9 +16,23 @@ public:
         mt19937_64* rng,
         string goal,
         string exit,
-        vector<string> teleporters);
+        vector<string> teleporters
+    );
     virtual vector<string> Run(
         Percepts& percepts,
         AgentComm * comms
+    );
+    virtual string Choice(
+        Percepts& percepts
+    );
+    virtual string findGoal(
+        Percepts& percepts
+    );
+    virtual string nearbyHound(
+        Percepts& percepts
+    );
+    virtual string flee(
+        Percepts& percepts,
+        string houndLocation
     );
 };
