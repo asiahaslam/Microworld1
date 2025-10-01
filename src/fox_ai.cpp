@@ -20,7 +20,21 @@ FoxAI::FoxAI(
 string FoxAI::nearbyHound(
     Percepts& percepts
 ) {
-    string location;
+    string location = "";
+
+    bool foundHound = false;
+
+    for (size_t i = 0; i < percepts.sightings.size(); i++) {
+        if (percepts.sightings[i].type == AgentType::HOUND) {
+            location += percepts.sightings[i].direction;
+            location += percepts.sightings[i].distance;
+            foundHound = true;
+            break;
+        }
+    }
+
+    if (!foundHound) location = "N";
+
     // return whether there is a hound close by
     // if no return N. if yes return distance and direction
     return location;
@@ -30,9 +44,25 @@ vector<string> FoxAI::Flee(
     Percepts& percepts,
     string houndLocation
 ) {
+    // NEED more logic here so it doesn't get stuck against walls!!
     vector<string> commands;
+    switch (houndLocation[0]) { 
+        case 'L':
+            commands.push_back("R");
+            commands.push_back("F");
+            break;
+        case 'R':
+            commands.push_back("L");
+            commands.push_back("F");
+            break;
+        default:
+            commands.push_back("B");
+            commands.push_back("B");
+            break;
+    }
     // decide where to flee to. avoid walls. maybe do exit or teleport
     // go away from hound's location
+    // start out by just going in opposite direction from hound
     return commands;
 }
 
@@ -109,7 +139,22 @@ vector<string> FoxAI::Explore(
 vector<string> FoxAI::Choice(
     Percepts& percepts
 ) {
-    vector<string> goToGoal = findGoal(percepts);
+    /* vector<string> goToGoal = findGoal(percepts);
+
+        if (goToGoal[0] == "N") {
+            // run function to explore area
+            return Explore(percepts);
+        }
+        else {
+            // send commands to go toward goal
+            return goToGoal;
+        } */
+
+    string houndLocation = nearbyHound(percepts);
+
+    // if no hound visible, explore the area
+    if (houndLocation == "N") {
+        vector<string> goToGoal = findGoal(percepts);
 
         if (goToGoal[0] == "N") {
             // run function to explore area
@@ -119,22 +164,24 @@ vector<string> FoxAI::Choice(
             // send commands to go toward goal
             return goToGoal;
         }
+    }
+    // if hound is not too close, get nearby goals
+    else if (houndLocation[1] > 5) {
+        vector<string> goToGoal = findGoal(percepts);
 
-    /* string houndLocation = nearbyHound(percepts);
-
-    if (houndLocation == "N") {
-        string goToGoal = findGoal(percepts);
-
-        if (goToGoal[0] == 'N') {
-            // run function to explore area
+        if (goToGoal[0] == "N") {
+            // if no goal, run away from hound
+            return Flee(percepts, houndLocation);
         }
         else {
+            // if there is a goal closeby, get the goal
             return goToGoal;
         }
     }
+    // if hound is close, run away
     else {
-        return flee(percepts, houndLocation);
-    } */
+        return Flee(percepts, houndLocation);
+    }
 }
 
 vector<string> FoxAI::Run(
