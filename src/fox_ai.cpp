@@ -20,30 +20,32 @@ FoxAI::FoxAI(
 string FoxAI::nearbyHound(
     Percepts& percepts
 ) {
+    string location;
     // return whether there is a hound close by
     // if no return N. if yes return distance and direction
-    return "F";
+    return location;
 }
 
-string FoxAI::Flee(
+vector<string> FoxAI::Flee(
     Percepts& percepts,
     string houndLocation
 ) {
+    vector<string> commands;
     // decide where to flee to. avoid walls. maybe do exit or teleport
     // go away from hound's location
-    return "F";
+    return commands;
 }
 
-string FoxAI::findGoal(
+vector<string> FoxAI::findGoal(
     Percepts& percepts
 ) {
-    string commands = "";
+    vector<string> commands;
 
     bool foundGoal = false;
     // return string of commands. if no goal found return "N"
 
     if (percepts.current[0] == goal) {
-        commands = "UF";
+        commands.push_back("U");
         foundGoal = true;
     }
 
@@ -52,12 +54,12 @@ string FoxAI::findGoal(
     if (!foundGoal) {
         for (size_t i = 0; i < percepts.forward.size(); i++) {
             if (percepts.forward[i] == goal) {
-                commands = "F";
+                commands.push_back("F");
                 if (i == 0) {
-                    commands += "U";
+                    commands.push_back("U");
                 }
                 else {
-                    commands += "F";
+                    commands.push_back("F");
                 }
                 foundGoal = true;
             }
@@ -67,7 +69,8 @@ string FoxAI::findGoal(
     if (!foundGoal) {
         for (size_t i = 0; i < percepts.left.size(); i++) {
             if (percepts.left[i] == goal) {
-                commands = "LF";
+                commands.push_back("L");
+                commands.push_back("F");
                 foundGoal = true;
             }
         }
@@ -76,38 +79,39 @@ string FoxAI::findGoal(
     if (!foundGoal) {
         for (size_t i = 0; i < percepts.right.size(); i++) {
             if (percepts.right[i] == goal) {
-                commands = "RF";
+                commands.push_back("R");
+                commands.push_back("F");
                 foundGoal = true;
             }
         }
     }
 
     if (!foundGoal) {
-        commands = "N";
+        commands.push_back("N");
     }
 
     return commands;
 }
 
-string FoxAI::Explore(
+vector<string> FoxAI::Explore(
     Percepts& percepts
 ) {
     // use memory, percepts, location on map to decide where to go
-    string commands = "";
+    vector<string> commands;
         vector<string> arr = { "F", "B", "L", "R" };
         while(commands.size() < 2) {        
             shuffle(arr.begin(), arr.end(), *rng);
-            commands += arr[0];
+            commands.push_back(arr[0]);
         }
         return commands;
 }
 
-string FoxAI::Choice(
+vector<string> FoxAI::Choice(
     Percepts& percepts
 ) {
-    string goToGoal = findGoal(percepts);
+    vector<string> goToGoal = findGoal(percepts);
 
-        if (goToGoal[0] == 'N') {
+        if (goToGoal[0] == "N") {
             // run function to explore area
             return Explore(percepts);
         }
@@ -199,7 +203,11 @@ vector<string> FoxAI::Run(
     // how percepts and commands work. You should not include the
     // following in your solution.
 
-    vector<string> cmds;
+    vector<string> cmds = Choice(percepts);
+
+    for (int i = 0; i < cmds.size(); i++) {
+        cout << cmds[i] << endl;
+    }
 
     /* if (percepts.current[0] == goal) cmds.push_back("U");
     else if (percepts.current[0] == exit) cmds.push_back("U");
@@ -212,11 +220,9 @@ vector<string> FoxAI::Run(
         cmds.push_back(arr[0]);
     } */
 
-    string commands = Choice(percepts);
+    /* string commands = Choice(percepts); */
 
-    
-
-    string command1 = "";
+    /* string command1 = "";
     command1 += commands[0];
     cout << command1 << endl;
     string command2 = "";
@@ -224,7 +230,7 @@ vector<string> FoxAI::Run(
     cout << command2 << endl;
 
     cmds.push_back(command1);
-    cmds.push_back(command2);
+    cmds.push_back(command2); */
     
     return cmds;
 }   

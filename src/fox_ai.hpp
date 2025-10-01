@@ -22,20 +22,20 @@ public:
         Percepts& percepts,
         AgentComm * comms
     );
-    virtual string Choice(
+    virtual vector<string> Choice(
         Percepts& percepts
     );
-    virtual string findGoal(
+    virtual vector<string> findGoal(
         Percepts& percepts
     );
     virtual string nearbyHound(
         Percepts& percepts
     );
-    virtual string Flee(
+    virtual vector<string> Flee(
         Percepts& percepts,
         string houndLocation
     );
-    virtual string Explore(
+    virtual vector<string> Explore(
         Percepts& percepts
     );
 };
