@@ -31,8 +31,11 @@ public:
     virtual string nearbyHound(
         Percepts& percepts
     );
-    virtual string flee(
+    virtual string Flee(
         Percepts& percepts,
         string houndLocation
+    );
+    virtual string Explore(
+        Percepts& percepts
     );
 };

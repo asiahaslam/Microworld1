@@ -22,31 +22,101 @@ string FoxAI::nearbyHound(
 ) {
     // return whether there is a hound close by
     // if no return N. if yes return distance and direction
-    return "N";
+    return "F";
 }
 
-string FoxAI::flee(
+string FoxAI::Flee(
     Percepts& percepts,
     string houndLocation
 ) {
     // decide where to flee to. avoid walls. maybe do exit or teleport
     // go away from hound's location
-    return "N";
+    return "F";
 }
 
 string FoxAI::findGoal(
     Percepts& percepts
 ) {
+    string commands = "";
+
+    bool foundGoal = false;
     // return string of commands. if no goal found return "N"
-    return "N";
+
+    if (percepts.current[0] == goal) {
+        commands = "UF";
+        foundGoal = true;
+    }
+
+    // if no goal found forward go left. then right. then if not do random.
+
+    if (!foundGoal) {
+        for (size_t i = 0; i < percepts.forward.size(); i++) {
+            if (percepts.forward[i] == goal) {
+                commands = "F";
+                if (i == 0) {
+                    commands += "U";
+                }
+                else {
+                    commands += "F";
+                }
+                foundGoal = true;
+            }
+        }
+    }
+
+    if (!foundGoal) {
+        for (size_t i = 0; i < percepts.left.size(); i++) {
+            if (percepts.left[i] == goal) {
+                commands = "LF";
+                foundGoal = true;
+            }
+        }
+    }
+
+    if (!foundGoal) {
+        for (size_t i = 0; i < percepts.right.size(); i++) {
+            if (percepts.right[i] == goal) {
+                commands = "RF";
+                foundGoal = true;
+            }
+        }
+    }
+
+    if (!foundGoal) {
+        commands = "N";
+    }
+
+    return commands;
+}
+
+string FoxAI::Explore(
+    Percepts& percepts
+) {
+    // use memory, percepts, location on map to decide where to go
+    string commands = "";
+        vector<string> arr = { "F", "B", "L", "R" };
+        while(commands.size() < 2) {        
+            shuffle(arr.begin(), arr.end(), *rng);
+            commands += arr[0];
+        }
+        return commands;
 }
 
 string FoxAI::Choice(
     Percepts& percepts
 ) {
-    string commands = "";
+    string goToGoal = findGoal(percepts);
 
-    string houndLocation = nearbyHound(percepts);
+        if (goToGoal[0] == 'N') {
+            // run function to explore area
+            return Explore(percepts);
+        }
+        else {
+            // send commands to go toward goal
+            return goToGoal;
+        }
+
+    /* string houndLocation = nearbyHound(percepts);
 
     if (houndLocation == "N") {
         string goToGoal = findGoal(percepts);
@@ -60,7 +130,7 @@ string FoxAI::Choice(
     }
     else {
         return flee(percepts, houndLocation);
-    }
+    } */
 }
 
 vector<string> FoxAI::Run(
@@ -142,51 +212,19 @@ vector<string> FoxAI::Run(
         cmds.push_back(arr[0]);
     } */
 
-    if (percepts.current[0] == goal) cmds.push_back("U");
+    string commands = Choice(percepts);
 
-    bool foundGoal = false;
+    
 
-    // if no goal found forward go left. then right. then if not do random.
+    string command1 = "";
+    command1 += commands[0];
+    cout << command1 << endl;
+    string command2 = "";
+    command2 += commands[1];
+    cout << command2 << endl;
 
-    for (size_t i = 0; i < percepts.forward.size(); i++) {
-        if (percepts.forward[i] == goal) {
-            cmds.push_back("F");
-            if (i == 0) {
-                cmds.push_back("U");
-            }
-            else {
-                cmds.push_back("F");
-            }
-            foundGoal = true;
-        }
-    }
-
-    if (foundGoal == false) {
-        for (size_t i = 0; i < percepts.left.size(); i++) {
-        if (percepts.left[i] == goal) {
-            cmds.push_back("L");
-            cmds.push_back("F");
-            foundGoal = true;
-        }
-    }
-    }
-
-    if (foundGoal == false) {
-        for (size_t i = 0; i < percepts.right.size(); i++) {
-        if (percepts.right[i] == goal) {
-            cmds.push_back("R");
-            cmds.push_back("F");
-        }
-    }
-    }
-
-    if (foundGoal == false) {
-        vector<string> arr = { "F", "B", "L", "R" };
-        while(cmds.size() < 2) {        
-            shuffle(arr.begin(), arr.end(), *rng);
-            cmds.push_back(arr[0]);
-        }
-    }
+    cmds.push_back(command1);
+    cmds.push_back(command2);
     
     return cmds;
-}
+}   
