@@ -386,7 +386,11 @@ void loop(
                     unsigned s = 0;
                     while (s < foxes[i].GetSpeed() && s < cmds.size()) {
                         std::string cmd = cmds[s];
-
+                        location = foxes[i].GetLoc();
+                        forward = foxes[i].GetHeading();
+                        left = Vec2(forward.y, -forward.x);
+                        right = Vec2(-forward.y, forward.x);
+                        back = Vec2(-forward.x, -forward.y);
                         // Move forward
                         if (cmd == "F") {
                             location = location + forward;
@@ -526,8 +530,12 @@ void loop(
                     std::vector<std::string> cmds = hounds[i].RunAI(percepts, &comms);
                     unsigned s = 0;
                     while (s < hounds[i].GetSpeed() && s < cmds.size()) {
-
                         std::string cmd = cmds[s];
+                        Vec2 location = hounds[i].GetLoc();
+                        forward = hounds[i].GetHeading();
+                        left = Vec2(forward.y, -forward.x);
+                        right = Vec2(-forward.y, forward.x);
+                        back = Vec2(-forward.x, -forward.y);
                         if (cmd == "F") {
                             location = location + forward;
                             if (world.CanMoveIntoCell(location)) {
