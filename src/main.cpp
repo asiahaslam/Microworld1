@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
     /**************************************************************
     SET UP THE WORLD
     */
-    std::string world_filename = "default_world";
+    std::string world_filename = "worldA";
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-w") == 0) {

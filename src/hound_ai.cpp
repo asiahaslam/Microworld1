@@ -89,12 +89,14 @@ vector<string> HoundAI::Run(
 
     bool foundFox = false;
 
-    for (size_t i = 0; i < percepts.sightings.size(); i++) {
+    /* for (size_t i = 0; i < percepts.sightings.size(); i++) {
         if (percepts.sightings[i].type == AgentType::FOX) cout << "   FOX ";
         else cout << "  HOUND ";
         cout << "Dir " << percepts.sightings[i].direction << " ";
         cout << "Dis " << percepts.sightings[i].distance << "\n";
-    }
+    } */
+
+    // can a hound jump over a fox?? or does it get the fox
 
     for (size_t i = 0; i < percepts.sightings.size(); i++) {
         if (percepts.sightings[i].type == AgentType::FOX) {
@@ -109,6 +111,7 @@ vector<string> HoundAI::Run(
             }
             else if (percepts.sightings[i].direction == "L") {
                 cmds.push_back("L");
+                cmds.push_back("F");
                 cmds.push_back("F");
                 if (percepts.sightings[i].distance > 1) {
                     cmds.push_back("F");

@@ -128,12 +128,123 @@ vector<string> FoxAI::Explore(
 ) {
     // use memory, percepts, location on map to decide where to go
     vector<string> commands;
-        vector<string> arr = { "F", "B", "L", "R" };
-        while(commands.size() < 2) {        
+    vector<string> arr = { "F", "B", "L", "R" };
+        /* while(commands.size() < 2) {        
+            shuffle(arr.begin(), arr.end(), *rng);
+            commands.push_back(arr[0]);
+        } */
+        
+
+    bool f, ff, l, ll, r, rr = false; // variables to hold nearby walls
+    if (percepts.forward[0] == "w") f = true;
+    else if (percepts.forward[1] == "w") ff = true;
+    if (percepts.left[0] == "w") l = true;
+    else if (percepts.left[1] == "w") ll = true;
+    if (percepts.right[0] == "w") r = true;
+    else if (percepts.right[1] == "w") rr = true;
+
+    if (f) { // wall front
+        if (l) { // wall front and left
+            if (r) { // wall front, left, and right
+                commands.push_back("B");
+                commands.push_back("B");
+            }
+            else { // wall in front and left
+                // RF and BR
+                vector<int> arr = { 0, 1 };  
+                shuffle(arr.begin(), arr.end(), *rng);
+                if (arr[0] == 0) {
+                    commands.push_back("R");
+                    commands.push_back("F");
+                }
+                else {
+                    commands.push_back("B");
+                    commands.push_back("R");
+                }
+            }
+        }
+        else { // wall front but not left
+            if (r) { // wall front and right but not left
+                // can go LF or BL
+                vector<int> arr = { 0, 1 };  
+                shuffle(arr.begin(), arr.end(), *rng);
+                if (arr[0] == 0) {
+                    commands.push_back("L");
+                    commands.push_back("F");
+                }
+                else {
+                    commands.push_back("B");
+                    commands.push_back("L");
+                }
+            }
+            else { // wall front but not right or left
+                vector<string> arr = { "B", "L", "R" };   
+                while(commands.size() < 2) {        
+                    shuffle(arr.begin(), arr.end(), *rng);
+                    commands.push_back(arr[0]);
+                }
+            }     
+        } 
+    }
+    else { // no wall in front
+        if (ff) {
+            commands.push_back("F");
+            vector<string> arr = { "L", "R" };      
             shuffle(arr.begin(), arr.end(), *rng);
             commands.push_back(arr[0]);
         }
-        return commands;
+        else { // no wall in front or 2 in front
+            if (l) { // wall left but not front or 2 in front
+                if (r) { // wall left and right
+                    commands.push_back("F");
+                    commands.push_back("F");
+                }
+                else { // wall only to left
+                    vector<string> arr = { "F", "B", "R" };
+                    while(commands.size() < 2) {        
+                        shuffle(arr.begin(), arr.end(), *rng);
+                        commands.push_back(arr[0]);
+                    }
+                }
+            }
+            else { // no wall in front or left
+                if (r) { // wall only right
+                    vector<string> arr = { "F", "B", "L" };
+                    while(commands.size() < 2) {        
+                        shuffle(arr.begin(), arr.end(), *rng);
+                        commands.push_back(arr[0]);
+                    }
+                }
+                else { // no walls front, left, or right
+                    vector<string> arr = { "F", "B", "L", "R" };
+                    while(commands.size() < 2) {        
+                        shuffle(arr.begin(), arr.end(), *rng);
+                        commands.push_back(arr[0]);
+                    }
+                }
+            }
+        }
+        
+        /* if (ff) { // wall 2 in front    
+            if (l) { // wall 2 in front and left
+                if (r) { // wall 2 in front, left, right
+                    commands.push_back("B");
+                    commands.push_back("B");
+                }
+                else { // wall 2 in front, left, and not right
+                    commands.push_back("F");
+                }
+            }
+            else { // wall 2 in front and not left
+                commands.push_back("F");
+            }
+        }
+        else {
+            commands.push_back("F");
+            commands.push_back("F");
+        } */
+    }
+    return commands;
 }
 
 vector<string> FoxAI::Choice(
