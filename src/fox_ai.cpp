@@ -12,11 +12,22 @@ FoxAI::FoxAI(
     mt19937_64* rng,
     string goal,
     string exit,
-    vector<string> teleporters)
-    :AI(id, agent_speed, rng), goal(goal), exit(exit), teleporters(teleporters)
+    vector<string> teleporters
+)
+    : AI(id, agent_speed, rng), goal(goal), exit(exit), teleporters(teleporters)
 {
+    // initialize 2D map filled with "i" (unmapped)
+    this->map = vector<vector<mapItems>>(100, vector<mapItems>(100, i));
 }
 
+// update specific map cell
+void FoxAI::updateMap(int row, int col, mapItems item) {
+    if (row >= 0 && row < (int)map.size() && col >= 0 && col < (int)map[row].size()) {
+        map[row][col] = item;
+    }
+}
+
+// find distance and direction of nearest hound if there is one
 string FoxAI::nearbyHound(
     Percepts& percepts
 ) {
@@ -43,6 +54,7 @@ string FoxAI::nearbyHound(
 vector<string> FoxAI::Flee(
     Percepts& percepts,
     string houndLocation
+    // int numForwardPrecepts
 ) {
     // NEED more logic here so it doesn't get stuck against walls!!
     vector<string> commands;
@@ -80,8 +92,7 @@ vector<string> FoxAI::findGoal(
         foundGoal = true;
     }
 
-    // if no goal found forward go left. then right. then if not do random.
-
+    // see if there is a goal ahead
     if (!foundGoal) {
         for (size_t i = 0; i < percepts.forward.size(); i++) {
             if (percepts.forward[i] == goal) {
@@ -97,6 +108,7 @@ vector<string> FoxAI::findGoal(
         }
     }
 
+    // see if there is a goal to the left
     if (!foundGoal) {
         for (size_t i = 0; i < percepts.left.size(); i++) {
             if (percepts.left[i] == goal) {
@@ -107,6 +119,7 @@ vector<string> FoxAI::findGoal(
         }
     }
 
+    // see if there is a goal to the right
     if (!foundGoal) {
         for (size_t i = 0; i < percepts.right.size(); i++) {
             if (percepts.right[i] == goal) {
@@ -117,6 +130,7 @@ vector<string> FoxAI::findGoal(
         }
     }
 
+    // no goal found
     if (!foundGoal) {
         commands.push_back("N");
     }
@@ -129,11 +143,6 @@ vector<string> FoxAI::Explore(
 ) {
     // use memory, percepts, location on map to decide where to go
     vector<string> commands;
-    vector<string> arr = { "F", "B", "L", "R" };
-        /* while(commands.size() < 2) {        
-            shuffle(arr.begin(), arr.end(), *rng);
-            commands.push_back(arr[0]);
-        } */
         
     bool f = false;
     bool ff = false;
@@ -141,14 +150,14 @@ vector<string> FoxAI::Explore(
     bool ll = false;
     bool r = false;
     bool rr = false;
-    cout << f << l << r << ff << ll << rr << endl;
+    // cout << f << l << r << ff << ll << rr << endl;
     if (percepts.forward.size() == 1) f = true;
     if (percepts.forward.size() == 2) ff = true;
     if (percepts.left.size() == 1) l = true;
     if (percepts.left.size() == 2) ll = true;
     if (percepts.right.size() == 1) r = true;
     if (percepts.right.size() == 2) rr = true;
-    cout << f << l << r << ff << ll << rr << endl;
+    // cout << f << l << r << ff << ll << rr << endl;
 
     if (f) { // wall front
         if (l) { // wall front and left
@@ -231,46 +240,18 @@ vector<string> FoxAI::Explore(
                 }
             }
         }
-        
-        /* if (ff) { // wall 2 in front    
-            if (l) { // wall 2 in front and left
-                if (r) { // wall 2 in front, left, right
-                    commands.push_back("B");
-                    commands.push_back("B");
-                }
-                else { // wall 2 in front, left, and not right
-                    commands.push_back("F");
-                }
-            }
-            else { // wall 2 in front and not left
-                commands.push_back("F");
-            }
-        }
-        else {
-            commands.push_back("F");
-            commands.push_back("F");
-        } */
     }
-    cout << percepts.forward[0] << percepts.left[0] << percepts.right[0] << endl;
-    cout << f << l << r << endl;
+    // cout << percepts.forward[0] << percepts.left[0] << percepts.right[0] << endl;
+    // cout << f << l << r << endl;
     return commands;
 }
 
 vector<string> FoxAI::Choice(
     Percepts& percepts
 ) {
-    /* vector<string> goToGoal = findGoal(percepts);
-
-        if (goToGoal[0] == "N") {
-            // run function to explore area
-            return Explore(percepts);
-        }
-        else {
-            // send commands to go toward goal
-            return goToGoal;
-        } */
 
     string houndLocation = nearbyHound(percepts);
+    int houndDistance = houndLocation[1] - '0';
 
     // if no hound visible, explore the area
     if (houndLocation == "N") {
@@ -286,12 +267,12 @@ vector<string> FoxAI::Choice(
         }
     }
     // if hound is not too close, get nearby goals
-    else if (houndLocation[1] > 5) {
+    else if (houndDistance > 7) {
         vector<string> goToGoal = findGoal(percepts);
 
         if (goToGoal[0] == "N") {
-            // if no goal, run away from hound
-            return Flee(percepts, houndLocation);
+            // if no goal, explore
+            return Explore(percepts);
         }
         else {
             // if there is a goal closeby, get the goal
@@ -301,6 +282,33 @@ vector<string> FoxAI::Choice(
     // if hound is close, run away
     else {
         return Flee(percepts, houndLocation);
+    }
+}
+
+string mapItemToString(mapItems item) {
+    switch (item) {
+        case g: return "!";
+        case e: return "?";
+        case t: return "t";
+        case w: return "w";
+        case o: return "o";
+        case h: return "H";
+        case m: return "%";
+        case i: return "-";
+        default: return "?";
+    }
+}
+
+void FoxAI::printMap() const {
+    if (map.empty() || map[0].empty()) {
+        cout << "(map is empty)" << endl;
+        return;
+    }
+    for (const auto& row : map) {
+        for (auto cell : row) {
+            cout << mapItemToString(cell);
+        }
+        cout << endl;
     }
 }
 
@@ -370,34 +378,22 @@ vector<string> FoxAI::Run(
     // how percepts and commands work. You should not include the
     // following in your solution.
 
+    /* bool doneMapping = false;
+    while (doneMapping = false) {
+        // vector result = mapArea(precepts);
+        // if result.size() < 3
+        // else commands is first 2 and doneMapping = true
+    } */
+
+    int numForwardPercepts = 0;
+
     vector<string> cmds = Choice(percepts);
 
     for (int i = 0; i < cmds.size(); i++) {
         cout << cmds[i] << endl;
     }
 
-    /* if (percepts.current[0] == goal) cmds.push_back("U");
-    else if (percepts.current[0] == exit) cmds.push_back("U");
-    else if (find(teleporters.begin(), teleporters.end(), percepts.current[0]) != teleporters.end()) {
-        cmds.push_back("U");
-    }
-    vector<string> arr = { "F", "B", "L", "R" };
-    while(cmds.size() < 2) {        
-	shuffle(arr.begin(), arr.end(), *rng);
-        cmds.push_back(arr[0]);
-    } */
-
-    /* string commands = Choice(percepts); */
-
-    /* string command1 = "";
-    command1 += commands[0];
-    cout << command1 << endl;
-    string command2 = "";
-    command2 += commands[1];
-    cout << command2 << endl;
-
-    cmds.push_back(command1);
-    cmds.push_back(command2); */
+    // printMap();
     
     return cmds;
 }   
