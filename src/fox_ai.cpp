@@ -58,6 +58,7 @@ vector<string> FoxAI::Flee(
         default:
             commands.push_back("B");
             commands.push_back("B");
+            cout << "flee" << endl;
             break;
     }
     // decide where to flee to. avoid walls. maybe do exit or teleport
@@ -134,14 +135,20 @@ vector<string> FoxAI::Explore(
             commands.push_back(arr[0]);
         } */
         
-
-    bool f, ff, l, ll, r, rr = false; // variables to hold nearby walls
-    if (percepts.forward[0] == "w") f = true;
-    else if (percepts.forward[1] == "w") ff = true;
-    if (percepts.left[0] == "w") l = true;
-    else if (percepts.left[1] == "w") ll = true;
-    if (percepts.right[0] == "w") r = true;
-    else if (percepts.right[1] == "w") rr = true;
+    bool f = false;
+    bool ff = false;
+    bool l = false;
+    bool ll = false;
+    bool r = false;
+    bool rr = false;
+    cout << f << l << r << ff << ll << rr << endl;
+    if (percepts.forward.size() == 1) f = true;
+    if (percepts.forward.size() == 2) ff = true;
+    if (percepts.left.size() == 1) l = true;
+    if (percepts.left.size() == 2) ll = true;
+    if (percepts.right.size() == 1) r = true;
+    if (percepts.right.size() == 2) rr = true;
+    cout << f << l << r << ff << ll << rr << endl;
 
     if (f) { // wall front
         if (l) { // wall front and left
@@ -244,6 +251,8 @@ vector<string> FoxAI::Explore(
             commands.push_back("F");
         } */
     }
+    cout << percepts.forward[0] << percepts.left[0] << percepts.right[0] << endl;
+    cout << f << l << r << endl;
     return commands;
 }
 
