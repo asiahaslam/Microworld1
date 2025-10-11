@@ -21,7 +21,7 @@ private:
 
 public:
     vector<vector<mapItems>> map;  
-
+    pair<int, int> currentLocation;
     FoxAI(
         unsigned id,
         unsigned agent_speed,
@@ -34,10 +34,10 @@ public:
     virtual vector<string> Run(Percepts& percepts, AgentComm* comms);
     virtual vector<string> Choice(Percepts& percepts);
     virtual vector<string> findGoal(Percepts& percepts);
-    virtual string nearbyHound(Percepts& percepts);
+    // virtual string nearbyHound(Percepts& percepts);
     virtual vector<string> Flee(Percepts& percepts, string houndLocation);
     virtual vector<string> Explore(Percepts& percepts);
     virtual void updateMap(int i, int j, mapItems item);
-
-    void printMap() const;  // ✅ add this declaration
+    virtual vector<string> mapArea(Percepts& percepts);
+    void printMap() const;
 };

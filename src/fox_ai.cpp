@@ -18,6 +18,9 @@ FoxAI::FoxAI(
 {
     // initialize 2D map filled with "i" (unmapped)
     this->map = vector<vector<mapItems>>(100, vector<mapItems>(100, i));
+    // initialize current location
+
+    this->currentLocation = {30, 30};
 }
 
 // update specific map cell
@@ -27,8 +30,38 @@ void FoxAI::updateMap(int row, int col, mapItems item) {
     }
 }
 
+mapItems stringToMapItem(char item) {
+    switch (item) {
+        case 'g':
+            return g;
+        case 'e':
+            return e;
+        case 't':
+            return t;
+        case 'w':
+            return w;
+        case 'o':
+            return o;
+        case 'h':
+            return h;
+        case 'm':
+            return m;
+        default:
+            return i;
+    }
+}
+
+vector<string> FoxAI::mapArea(Percepts& percepts) {
+    vector<string> commands;
+    string current = percepts.current[0];
+    char item = current[0];
+    mapItems input = stringToMapItem(item);
+    updateMap(currentLocation.first, currentLocation.second, input);
+    return commands;
+}
+
 // find distance and direction of nearest hound if there is one
-string FoxAI::nearbyHound(
+string nearbyHound(
     Percepts& percepts
 ) {
     string location = "";
@@ -385,7 +418,9 @@ vector<string> FoxAI::Run(
         // else commands is first 2 and doneMapping = true
     } */
 
-    int numForwardPercepts = 0;
+    vector<string> temp = mapArea(percepts);
+
+    // int numForwardPercepts = 0;
 
     vector<string> cmds = Choice(percepts);
 
@@ -393,7 +428,7 @@ vector<string> FoxAI::Run(
         cout << cmds[i] << endl;
     }
 
-    // printMap();
+    printMap();
     
     return cmds;
 }   
